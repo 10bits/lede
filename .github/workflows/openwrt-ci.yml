@@ -8,10 +8,12 @@
 name: OpenWrt-CI
 
 on:
-  schedule:
-    - cron: 0 20 * * *
-  release:
-    types: [published]
+#   schedule:
+#     - cron: 0 20 * * *
+#   release:
+#     types: [published]
+  watch:
+    types: [started]
 
 jobs:
 
@@ -51,7 +53,11 @@ jobs:
           ./scripts/feeds install -a
 
       - name: Generate configuration file
-        run: make defconfig
+        run: |
+          rm -f ./.config*
+          cp ./.github/workflows/y1s.config ./.config
+          sed -i 's/^[ \t]*//g' ./.config
+          make defconfig
 
       - name: Make download
         run: |
